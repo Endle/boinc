@@ -161,7 +161,6 @@ struct PROJECT {
     bool non_cpu_intensive;
     bool suspended_via_gui;
     bool dont_request_more_work;
-	bool dont_upload_work;
     bool scheduler_rpc_in_progress;
     bool attached_via_acct_mgr;
     bool detach_when_done;
@@ -781,6 +780,7 @@ struct RPC {
     int do_rpc(const char*);
     int parse_reply();
 };
+
 
 #if defined(HAVE__CONFIGTHREADLOCALE) || defined(HAVE_USELOCALE)
 // no-op, the calling thread is already set to use C locale
