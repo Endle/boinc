@@ -86,9 +86,7 @@ Commands:\n\
  --lookup_account URL email passwd\n\
  --network_available                retry deferred network communication\n\
  --project URL op                   project operation\n\
-    op = reset | detach | update | suspend | resume\n\
-      dont_more_work | allow_more_work | dont_upload_work | allow_upload_work\n\
-      detach_when_done | dont_detach_when_done\n\
+   op = reset | detach | update | suspend | resume | nomorework | allowmorework | detach_when_done | dont_detach_when_done\n\
  --project_attach URL auth          attach to project\n\
  --quit                             tell client to exit\n\
  --quit_acct_mgr                    same as --acct_mgr detach\n\
@@ -103,11 +101,10 @@ Commands:\n\
  --set_proxy_settings\n\
  --set_run_mode mode duration       set run mode for given duration\n\
    mode = always | auto | never\n\
- --set_request_wus [ count ]        set request wus count (soon...)\n\
  --task url task_name op            task operation\n\
    op = suspend | resume | abort\n\
 "
-); 
+);
     exit(1);
 }
 
@@ -359,14 +356,10 @@ int main(int argc, char** argv) {
             retval = rpc.project_op(project, "detach");
         } else if (!strcmp(op, "update")) {
             retval = rpc.project_op(project, "update");
-        } else if (!strcmp(op, "dont_more_work")) {
-            retval = rpc.project_op(project, "dont_more_work");
-        } else if (!strcmp(op, "allow_more_work")) {
-            retval = rpc.project_op(project, "allow_more_work");
-		} else if (!strcmp(op, "dont_upload_work")) {
-			retval = rpc.project_op(project, "dont_upload_work");
-		} else if (!strcmp(op, "allow_upload_work")) {
-			retval = rpc.project_op(project, "allow_upload_work");
+        } else if (!strcmp(op, "nomorework")) {
+            retval = rpc.project_op(project, "nomorework");
+        } else if (!strcmp(op, "allowmorework")) {
+            retval = rpc.project_op(project, "allowmorework");
         } else if (!strcmp(op, "detach_when_done")) {
             retval = rpc.project_op(project, "detach_when_done");
         } else if (!strcmp(op, "dont_detach_when_done")) {
@@ -497,32 +490,7 @@ int main(int argc, char** argv) {
                 );
             }
         }
-	} else if (!strcmp(cmd, "--set_request_wus")) {
-		int num;
-		if (i == argc) {
-			num = 0;
-		}
-		else {
-			num = atoi(next_arg(argc, argv, i));
-		}
-		printf("soon, %d", num);
-		/*
-		retval = rpc.set_cpu_count(num);
-		if (!retval) {
-			unsigned int j;
-			for (j = 0; j<messages.messages.size(); j++) {
-				MESSAGE& md = *messages.messages[j];
-				strip_whitespace(md.body);
-				printf("%d: %s (%s) [%s] %s\n",
-					md.seqno,
-					time_to_string(md.timestamp),
-					prio_name(md.priority),
-					md.project.c_str(),
-					md.body.c_str()
-					);
-			}
-			*/
-	} else if (!strcmp(cmd, "--get_notices")) {
+    } else if (!strcmp(cmd, "--get_notices")) {
         int seqno;
         if (i == argc) {
             seqno = 0;

@@ -45,6 +45,7 @@ struct ACCT_MGR_INFO : PROJ_AM {
     //
     char login_name[256];   // unique name (could be email addr)
     char user_name[256];    // non-unique name
+    char team_name[256];
     char password_hash[256];
         // md5 of password.lowercase(login_name)
     char authenticator[256];
@@ -143,7 +144,6 @@ struct AM_ACCOUNT {
     bool no_rsc[MAX_RSC];
         // instructions from AM not to use various resources
     OPTIONAL_BOOL dont_request_more_work;
-	OPTIONAL_BOOL dont_upload_work;
     OPTIONAL_BOOL detach_when_done;
     OPTIONAL_DOUBLE resource_share;
     OPTIONAL_BOOL suspend;
@@ -156,7 +156,6 @@ struct AM_ACCOUNT {
         detach = false;
         update = false;
         dont_request_more_work.init();
-		dont_upload_work.init();
         detach_when_done.init();
         resource_share.init();
         suspend.init();

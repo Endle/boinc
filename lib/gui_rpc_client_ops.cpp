@@ -1,5 +1,5 @@
 // This file is part of BOINC.
-// http://boinc.berkeley.edu
+// https://boinc.berkeley.edu
 // Copyright (C) 2018 University of California
 //
 // BOINC is free software; you can redistribute it and/or modify it
@@ -13,7 +13,7 @@
 // See the GNU Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
-// along with BOINC.  If not, see <http://www.gnu.org/licenses/>.
+// along with BOINC.  If not, see <https://www.gnu.org/licenses/>.
 
 // This file contains:
 // 1) functions to clear and parse the various structs
@@ -170,6 +170,9 @@ int PROJECT_LIST_ENTRY::parse(XML_PARSER& xp) {
         if (xp.parse_string("url", url)) {
             continue;
         }
+        if (xp.parse_string("web_url", web_url)) {
+            continue;
+        }
         if (xp.parse_string("general_area", general_area)) continue;
         if (xp.parse_string("specific_area", specific_area)) continue;
         if (xp.parse_string("description", description)) {
@@ -193,6 +196,7 @@ int PROJECT_LIST_ENTRY::parse(XML_PARSER& xp) {
 void PROJECT_LIST_ENTRY::clear() {
     name.clear();
     url.clear();
+    web_url.clear();
     general_area.clear();
     specific_area.clear();
     description.clear();
@@ -423,7 +427,6 @@ int PROJECT::parse(XML_PARSER& xp) {
         if (xp.parse_bool("non_cpu_intensive", non_cpu_intensive)) continue;
         if (xp.parse_bool("suspended_via_gui", suspended_via_gui)) continue;
         if (xp.parse_bool("dont_request_more_work", dont_request_more_work)) continue;
-		if (xp.parse_bool("dont_upload_work", dont_upload_work)) continue;
         if (xp.parse_bool("ended", ended)) continue;
         if (xp.parse_bool("scheduler_rpc_in_progress", scheduler_rpc_in_progress)) continue;
         if (xp.parse_bool("attached_via_acct_mgr", attached_via_acct_mgr)) continue;
@@ -493,7 +496,6 @@ void PROJECT::clear() {
     non_cpu_intensive = false;
     suspended_via_gui = false;
     dont_request_more_work = false;
-	dont_upload_work = false;
     scheduler_rpc_in_progress = false;
     attached_via_acct_mgr = false;
     detach_when_done = false;
@@ -1787,19 +1789,13 @@ int RPC_CLIENT::project_op(PROJECT& project, const char* op) {
     } else if (!strcmp(op, "resume")) {
         tag = "project_resume";
         project.suspended_via_gui = false;
-    } else if (!strcmp(op, "allow_more_work")) {
+    } else if (!strcmp(op, "allowmorework")) {
         tag = "project_allowmorework";
         project.dont_request_more_work = false;
-    } else if (!strcmp(op, "dont_more_work")) {
+    } else if (!strcmp(op, "nomorework")) {
          tag = "project_nomorework";
         project.dont_request_more_work = true;
-	} else if (!strcmp(op, "allow_upload_work")) {
-		tag = "project_allowuploadwork";
-		project.dont_upload_work = false;
-	} else if (!strcmp(op, "dont_upload_work")) {
-		tag = "project_nouploadwork";
-		project.dont_upload_work = true;
-	} else if (!strcmp(op, "detach_when_done")) {
+    } else if (!strcmp(op, "detach_when_done")) {
          tag = "project_detach_when_done";
     } else if (!strcmp(op, "dont_detach_when_done")) {
          tag = "project_dont_detach_when_done";
@@ -2640,7 +2636,7 @@ int RPC_CLIENT::get_app_config(const char* url, APP_CONFIGS& config) {
     MSG_VEC mv;
     char buf[1024];
 
-    sprintf(buf,
+    snprintf(buf, sizeof (buf),
         "<get_app_config>\n"
         "    <url>%s</url>\n"
         "</get_app_config>\n",

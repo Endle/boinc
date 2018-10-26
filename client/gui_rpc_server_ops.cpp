@@ -1,6 +1,6 @@
 // This file is part of BOINC.
 // http://boinc.berkeley.edu
-// Copyright (C) 2008 University of California
+// Copyright (C) 2018 University of California
 //
 // BOINC is free software; you can redistribute it and/or modify it
 // under the terms of the GNU Lesser General Public License
@@ -279,7 +279,7 @@ static void handle_project_nomorework(GUI_RPC_CONN& grc) {
     PROJECT* p = get_project_parse(grc);
     if (!p) return;
     gstate.set_client_state_dirty("Project modified by user");
-    msg_printf(p, MSG_INFO, "work fetch suspended download by user");
+    msg_printf(p, MSG_INFO, "work fetch suspended by user");
     p->dont_request_more_work = true;
     grc.mfout.printf("<success/>\n");
 }
@@ -290,28 +290,8 @@ static void handle_project_allowmorework(GUI_RPC_CONN& grc) {
     gstate.set_client_state_dirty("Project modified by user");
     msg_printf(p, MSG_INFO, "work fetch resumed by user");
     p->dont_request_more_work = false;
-    gstate.request_work_fetch("project work fetch resumed download by user");
+    gstate.request_work_fetch("project work fetch resumed by user");
     grc.mfout.printf("<success/>\n");
-}
-
-static void handle_project_nouploadwork(GUI_RPC_CONN& grc) {
-	PROJECT* p = get_project_parse(grc);
-	if (!p) return;
-	gstate.set_client_state_dirty("Project modified by user");
-	msg_printf(p, MSG_INFO, "work fetch suspended by user");
-	p->dont_upload_work = true;
-	gstate.request_work_fetch("project work fetch resumed upload by user");
-	grc.mfout.printf("<success/>\n");
-}
-
-static void handle_project_allowuploadwork(GUI_RPC_CONN& grc) {
-	PROJECT* p = get_project_parse(grc);
-	if (!p) return;
-	gstate.set_client_state_dirty("Project modified by user");
-	msg_printf(p, MSG_INFO, "work fetch resumed by user");
-	p->dont_upload_work = false;
-	gstate.request_work_fetch("project work fetch resumed upload by user");
-	grc.mfout.printf("<success/>\n");
 }
 
 static void handle_project_detach_when_done(GUI_RPC_CONN& grc) {
@@ -1050,7 +1030,7 @@ static void handle_get_newer_version(GUI_RPC_CONN& grc) {
         "<newer_version>%s</newer_version>\n"
         "<download_url>%s</download_url>\n",
         gstate.newer_version.c_str(),
-        cc_config.client_download_url.c_str()
+        nvc_config.client_download_url.c_str()
     );
 }
 
@@ -1454,15 +1434,12 @@ GUI_RPC gui_rpcs[] = {
     GUI_RPC("get_proxy_settings", handle_get_proxy_settings,        true,   false,  true),
     GUI_RPC("network_available", handle_network_available,          true,   false,  false),
     GUI_RPC("project_allowmorework", handle_project_allowmorework,  true,   false,  false),
-	GUI_RPC("project_allowuploadwork", handle_project_allowuploadwork,
-	                                                                true,   false,  false),
     GUI_RPC("project_detach", handle_project_detach,                true,   false,  false),
     GUI_RPC("project_detach_when_done", handle_project_detach_when_done,
                                                                     true,   false,  false),
     GUI_RPC("project_dont_detach_when_done", handle_project_dont_detach_when_done,
                                                                     true,   false,  false),
     GUI_RPC("project_nomorework", handle_project_nomorework,        true,   false,  false),
-	GUI_RPC("project_nouploadwork", handle_project_nouploadwork,    true,   false,  false),
     GUI_RPC("project_resume", handle_project_resume,                true,   false,  false),
     GUI_RPC("project_suspend", handle_project_suspend,              true,   false,  false),
     GUI_RPC("quit", handle_quit,                                    true,   false,  false),
