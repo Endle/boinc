@@ -281,15 +281,13 @@ def create_database(srcdir, config = None, drop_first = False):
     import boinc_path_config
     config = config or configxml.default_config().config
     connect(config, nodb=True)
-    dbcon = get_dbconnection()
-    cursor = dbcon.cursor()
+    cursor = get_dbconnection().cursor()
     if drop_first:
         cursor.execute("drop database if exists %s"%config.db_name)
     cursor.execute("create database %s"%config.db_name)
     cursor.execute("use %s"%config.db_name)
-    for file in ['schema.sql', 'constraints.sql', 'content.sql']:
+    for file in ['schema.sql', 'constraints.sql']:
         _execute_sql_script(cursor, os.path.join(srcdir, 'db', file))
-    dbcon.commit()
     cursor.close()
 
 # alias

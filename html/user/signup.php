@@ -27,6 +27,8 @@ require_once("../inc/recaptchalib.php");
 
 
 function join_form() {
+    global $recaptcha_public_key;
+
     // Using invitation codes to restrict access?
     //
     if (defined('INVITE_CODES')) {

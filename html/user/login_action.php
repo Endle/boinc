@@ -64,10 +64,9 @@ function login_with_email($email_addr, $passwd, $next_url, $perm) {
             exit;
         }
     }
-
-    // Intercept next_url if consent has not yet been given
-    $next_url = intercept_login($user, $perm, $next_url);
+    $authenticator = $user->authenticator;
     Header("Location: ".url_base()."$next_url");
+    send_cookie('auth', $authenticator, $perm);
 }
 
 // email link case
@@ -98,10 +97,8 @@ function login_via_link($id, $t, $h) {
             get a new login link by email."
         );
     }
-
-    // Intercept next_url if consent has not yet been given
-    $next_url = intercept_login($user, true, "home.php");
-    Header("Location: ".url_base()."$next_url");
+    send_cookie('auth', $user->authenticator, true);
+    Header("Location: ".USER_HOME);
 }
 
 function login_with_auth($authenticator, $next_url, $perm) {
@@ -117,10 +114,8 @@ function login_with_auth($authenticator, $next_url, $perm) {
         sleep(LOGIN_FAIL_SLEEP_SEC);
         error_page("This account has been administratively disabled.");
     } else {
-
-        // Intercept next_url if consent has not yet been given
-        $next_url = intercept_login($user, $perm, $next_url);
-        Header("Location: ".url_base()."$next_url");
+        Header("Location: $next_url");
+        send_cookie('auth', $authenticator, $perm);
     }
 }
 
@@ -141,9 +136,8 @@ function login_with_ldap($uid, $passwd, $next_url, $perm) {
     if (!$user) {
         error_page("Couldn't create user");
     }
-    // Intercept next_url if consent has not yet been given
-    $next_url = intercept_login($user, $perm, $next_url);
     Header("Location: ".url_base()."$next_url");
+    send_cookie('auth', $user->authenticator, $perm);
     return;
 }
 
