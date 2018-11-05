@@ -2,10 +2,6 @@ language: cpp
 compiler:
   - gcc
 
-branches:
-  only:
-    - master
-    - coverity_scan
 
 dist: trusty
 sudo: required
@@ -42,16 +38,19 @@ env:
 matrix:
   fast_finish: true
   include:
-    - language: php
-      os: linux
-      php: 7.0
-      env:
-        - BOINC_TYPE=integration-test
-    - language: cpp
-      os: osx
-      env: BOINC_TYPE=manager-osx
-    - language: android
-      env: BOINC_TYPE=manager-android
+    #- language: php
+      #os: linux
+      #php: 7.0
+      #env:
+        #- BOINC_TYPE=integration-test
+    #- language: cpp
+      #os: osx
+      #env: BOINC_TYPE=manager-osx
+    #- language: android
+      #env: BOINC_TYPE=manager-android
+    - language: sh
+      os: windows
+
 
 before_install:
    - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then ( sudo apt-get -qq update ) fi
@@ -75,3 +74,5 @@ script:
 - if [[ "${BOINC_TYPE}" == "manager-android" ]]; then ( /bin/true ) fi
 - if [[ "${BOINC_TYPE}" == "unit-test" ]]; then ( /bin/true ) fi
 - if [[ "${BOINC_TYPE}" == "integration-test" ]]; then ( ./integration_test/executeTestSuite.sh ) fi
+- if [[ "{TRAVIS_OS_NAME}" == "windows" ]]; then ( dir ) fi
+
