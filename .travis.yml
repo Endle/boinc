@@ -29,6 +29,7 @@ env:
     - BOINC_TYPE=libs-mingw
     - BOINC_TYPE=apps-mingw
     - BOINC_TYPE=unit-test
+    - BOINC_TYPE=static-link
 
 matrix:
   fast_finish: true
@@ -56,6 +57,7 @@ before_script:
 
 script:
 - if [[ "${BOINC_TYPE}" == "libs" ]]; then ( ./configure --disable-server --disable-client --disable-manager && make ) fi
+- if [[ "${BOINC_TYPE}" == "static-link" ]]; then ( ./configure --disable-server --enable-client-release && make ) fi
 - if [[ "${BOINC_TYPE}" == "server" ]]; then ( ./configure --disable-client --disable-manager && make ) fi
 - if [[ "${BOINC_TYPE}" == "client" ]]; then ( ./configure --disable-server --disable-manager && make ) fi
 - if [[ "${BOINC_TYPE}" == "apps" ]]; then ( ./configure --enable-apps --disable-server --disable-client --disable-manager && make ) fi
